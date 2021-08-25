@@ -64,7 +64,7 @@ const nextSunrise = (lat = 0, long = 0) => {
   
     const sunrise = (solarNoon - ha / tau)
   
-    const sunriseDate = new Date(sunrise * millisecondsInDay + millisecondsInDay + time.date.getTime())
+    const sunriseDate = new Date((sunrise+1-time.offset / 24) * millisecondsInDay + time.date.getTime())
   
     return sunriseDate
   }
@@ -79,21 +79,24 @@ const nextSunrise = (lat = 0, long = 0) => {
 
 export default function App() {
   const [time, setTime] = useState(new Date)
-  const [location, setLocation] = useState(null)
+  // const [location, setLocation] = useState(null)
   const lat = 29.75
   const long = -95.35
-  const sunrise = nextSunrise(lat, long).toISOString()
+  const sunrise = nextSunrise(lat, long)
+  const brahmaMuhurta = new Date(sunrise.getTime()-(1*60*60+36)*60*1000)
 
-  // setSunrise(nextSunrise())
+  let countdown = new Date(sunrise-time)
 
-  setInterval(() => {
+  setTimeout(() => {
     setTime(new Date)
-  }, 20);
+  }, 1000);
 
   return (
     <View style={styles.container}>
-      <Text>The time is {time.toTimeString()}</Text>
-      <Text>The sunrise will be at {sunrise}</Text>
+      <Text>The time is {time.toTimeString().slice(0, 5)}</Text>
+      <Text>The sunrise will be at {sunrise.toTimeString().slice(0, 5)}</Text>
+      <Text>{`${countdown.getHours()} hours,${countdown.getMinutes()} minutes`} until next sunrise</Text>
+      <Text>{`${brahmaMuhurta.getHours()} hours,${brahmaMuhurta.getMinutes()} minutes`} until next Brahma Muhurta</Text>
       <StatusBar style="auto" />
     </View>
   );
