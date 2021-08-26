@@ -1,11 +1,9 @@
 import { StatusBar } from 'expo-status-bar';
 import React, {useState, useEffect, useRef} from 'react';
 import { StyleSheet, Text, View, Button, SafeAreaView } from 'react-native';
-// import { Audio } from 'expo-av';
+import { Audio } from 'expo-av';
 import * as Location from 'expo-location';
 import * as Notifications from 'expo-notifications';
-
-// const sound = new Audio.Sound();
 
 const nextSunrise = (lat = 0, long = 0, dayOffset = 0) => {
   const tau = 2 * Math.PI
@@ -87,9 +85,8 @@ export default function App() {
     return new Date
   })
   
-  const [sunrise, setSunrise] = useState(() => {
-    return new Date
-  })
+  const [sunrise, setSunrise] = useState(nextSunrise(location?.coords.latitude, location?.coords.longitude)
+  )
 
   const [location, setLocation] = useState(null);
   
@@ -118,8 +115,12 @@ export default function App() {
     }
   }, [])
 
-  function handleDing() {
+  async function handleDing() {
     console.log("ding")
+    const { sound } = await Audio.Sound.createAsync(
+      require('./assets/ding.wav')
+    );
+    await sound.playAsync()
   }
 
   let brahmaMuhurta= (new Date(sunrise.getTime()-5760000))
@@ -139,19 +140,24 @@ export default function App() {
     brahmaMuhurta= (new Date(tomorrowSunrise.getTime()-5760000))
   }
 
-
   return (
     <SafeAreaView style = {styles.container}>
       <View style={styles.container}>
-        <Text>The time is {time.toTimeString().slice(0, 5)}</Text>
+        <Text>The time is {time.toTimeString().slice(0, 8)}</Text>
         <Text>The sunrise will be at {sunrise.toTimeString().slice(0, 5)}</Text>
         <Text>The Brahma Muhurta will be at {brahmaMuhurta.toTimeString().slice(0, 5)}</Text>
         <Text>{`${sunriseCountdown.hours} hours, ${sunriseCountdown.minutes} minutes`} until next sunrise</Text>
         <Text>{`${brahmaMuhurtaCountdown.hours} hours,${brahmaMuhurtaCountdown.minutes} minutes`} until next Brahma Muhurta</Text>
+        <Text>{`${location?.coords.latitude} latitude,${location?.coords.longitude} longitude`}</Text>
         <StatusBar style="auto" />
       </View>
       <View style={styles.container}>
-        <Button onPress={()=>handleDing()}>ding</Button>
+        <Button 
+          onPress={()=>handleDing()}
+          title="Press Me"
+        >
+
+        </Button>
         <Text>{}</Text>
       </View>
     </SafeAreaView>
