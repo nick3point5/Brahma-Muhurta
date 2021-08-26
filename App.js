@@ -1,8 +1,11 @@
 import { StatusBar } from 'expo-status-bar';
 import React, {useState, useEffect, useRef} from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Button, SafeAreaView } from 'react-native';
+// import { Audio } from 'expo-av';
 import * as Location from 'expo-location';
 import * as Notifications from 'expo-notifications';
+
+// const sound = new Audio.Sound();
 
 const nextSunrise = (lat = 0, long = 0, dayOffset = 0) => {
   const tau = 2 * Math.PI
@@ -83,36 +86,17 @@ export default function App() {
   const [time, setTime] = useState(() => {
     return new Date
   })
-
-  const [location, setLocation] = useState(null);
-
+  
   const [sunrise, setSunrise] = useState(() => {
     return new Date
   })
+
+  const [location, setLocation] = useState(null);
   
-  let brahmaMuhurta= (new Date(sunrise.getTime()-5760000))
-
-  if ((brahmaMuhurta-time)<=0) {
-    const tomorrowSunrise = (nextSunrise(location?.coords.latitude, location?.coords.longitude,1))
-    brahmaMuhurta= (new Date(tomorrowSunrise.getTime()-5760000))
-  }
-
   useEffect(() => {
-    console.log(sunrise)
     setSunrise(nextSunrise(location?.coords.latitude, location?.coords.longitude))
   }, location)
 
-  
-  let sunriseCountdown = {
-    minutes: Math.floor((sunrise-time)/1000/60%60),
-    hours: Math.floor((sunrise-time)/1000/60/60%60)
-  }
-
-  let brahmaMuhurtaCountdown = {
-    minutes: Math.floor((brahmaMuhurta-time)/1000/60%60),
-    hours: Math.floor((brahmaMuhurta-time)/1000/60/60%60)
-  }
-  
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -134,8 +118,30 @@ export default function App() {
     }
   }, [])
 
+  function handleDing() {
+    console.log("ding")
+  }
+
+  let brahmaMuhurta= (new Date(sunrise.getTime()-5760000))
+  
+  let sunriseCountdown = {
+    minutes: Math.floor((sunrise-time)/60000%60),
+    hours: Math.floor((sunrise-time)/3600000%60),
+  }
+
+  let brahmaMuhurtaCountdown = {
+    minutes: Math.floor((brahmaMuhurta-time)/60000%60),
+    hours: Math.floor((brahmaMuhurta-time)/3600000%60),
+  }
+
+  if ((brahmaMuhurta-time)<=0) {
+    const tomorrowSunrise = (nextSunrise(location?.coords.latitude, location?.coords.longitude,1))
+    brahmaMuhurta= (new Date(tomorrowSunrise.getTime()-5760000))
+  }
+
+
   return (
-    <>
+    <SafeAreaView style = {styles.container}>
       <View style={styles.container}>
         <Text>The time is {time.toTimeString().slice(0, 5)}</Text>
         <Text>The sunrise will be at {sunrise.toTimeString().slice(0, 5)}</Text>
@@ -145,9 +151,10 @@ export default function App() {
         <StatusBar style="auto" />
       </View>
       <View style={styles.container}>
+        <Button onPress={()=>handleDing()}>ding</Button>
         <Text>{}</Text>
       </View>
-    </>
+    </SafeAreaView>
   );
 }
 
