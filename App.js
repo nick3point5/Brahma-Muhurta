@@ -1,14 +1,16 @@
 import { StatusBar } from 'expo-status-bar';
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import * as Location from 'expo-location';
+import * as Notifications from 'expo-notifications';
 
-const nextSunrise = (lat = 0, long = 0) => {
+const nextSunrise = (lat = 0, long = 0, dayOffset = 0) => {
   const tau = 2 * Math.PI
   const millisecondsInDay = 86400000
   const radFactor = tau / 360
   lat = lat * radFactor
   long = long * radFactor
-  const time = timeObject(-1)
+  const time = timeObject(dayOffset-1)
 
   function timeObject(dayOffset = 0) {
 
@@ -70,35 +72,82 @@ const nextSunrise = (lat = 0, long = 0) => {
   }
 
   let sunrise = calculateSunrise(time, lat, long)
-  if((new Date()) > sunrise){
-    sunrise = calculateSunrise(timeObject(0), lat, long)
+  if((new Date()) >= sunrise){
+    sunrise = calculateSunrise(timeObject(dayOffset), lat, long)
   }
 
   return sunrise
 }
 
 export default function App() {
-  const [time, setTime] = useState(new Date)
-  // const [location, setLocation] = useState(null)
-  const lat = 29.75
-  const long = -95.35
-  const sunrise = nextSunrise(lat, long)
-  const brahmaMuhurta = new Date(sunrise.getTime()-(1*60*60+36)*60*1000)
+  const [time, setTime] = useState(() => {
+    return new Date
+  })
 
-  let countdown = new Date(sunrise-time)
+  const [location, setLocation] = useState(null);
 
-  setTimeout(() => {
-    setTime(new Date)
-  }, 1000);
+  const [sunrise, setSunrise] = useState(() => {
+    return new Date
+  })
+  
+  let brahmaMuhurta= (new Date(sunrise.getTime()-5760000))
+
+  if ((brahmaMuhurta-time)<=0) {
+    const tomorrowSunrise = (nextSunrise(location?.coords.latitude, location?.coords.longitude,1))
+    brahmaMuhurta= (new Date(tomorrowSunrise.getTime()-5760000))
+  }
+
+  useEffect(() => {
+    console.log(sunrise)
+    setSunrise(nextSunrise(location?.coords.latitude, location?.coords.longitude))
+  }, location)
+
+  
+  let sunriseCountdown = {
+    minutes: Math.floor((sunrise-time)/1000/60%60),
+    hours: Math.floor((sunrise-time)/1000/60/60%60)
+  }
+
+  let brahmaMuhurtaCountdown = {
+    minutes: Math.floor((brahmaMuhurta-time)/1000/60%60),
+    hours: Math.floor((brahmaMuhurta-time)/1000/60/60%60)
+  }
+  
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        setErrorMsg('Permission to access location was denied');
+        return;
+      }
+
+      let location = await Location.getCurrentPositionAsync({});
+      setLocation(location);
+    })()
+
+    const tick = setInterval(() => {      
+      setTime(new Date)
+    }, 1000);
+
+    return () => {
+      clearInterval(tick)
+    }
+  }, [])
 
   return (
-    <View style={styles.container}>
-      <Text>The time is {time.toTimeString().slice(0, 5)}</Text>
-      <Text>The sunrise will be at {sunrise.toTimeString().slice(0, 5)}</Text>
-      <Text>{`${countdown.getHours()} hours,${countdown.getMinutes()} minutes`} until next sunrise</Text>
-      <Text>{`${brahmaMuhurta.getHours()} hours,${brahmaMuhurta.getMinutes()} minutes`} until next Brahma Muhurta</Text>
-      <StatusBar style="auto" />
-    </View>
+    <>
+      <View style={styles.container}>
+        <Text>The time is {time.toTimeString().slice(0, 5)}</Text>
+        <Text>The sunrise will be at {sunrise.toTimeString().slice(0, 5)}</Text>
+        <Text>The Brahma Muhurta will be at {brahmaMuhurta.toTimeString().slice(0, 5)}</Text>
+        <Text>{`${sunriseCountdown.hours} hours, ${sunriseCountdown.minutes} minutes`} until next sunrise</Text>
+        <Text>{`${brahmaMuhurtaCountdown.hours} hours,${brahmaMuhurtaCountdown.minutes} minutes`} until next Brahma Muhurta</Text>
+        <StatusBar style="auto" />
+      </View>
+      <View style={styles.container}>
+        <Text>{}</Text>
+      </View>
+    </>
   );
 }
 
