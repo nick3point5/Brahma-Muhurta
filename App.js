@@ -3,7 +3,7 @@ import React, {useState, useEffect, useRef} from 'react';
 import { StyleSheet, Text, View, Button, SafeAreaView } from 'react-native';
 import { Audio } from 'expo-av';
 import * as Location from 'expo-location';
-import * as Notifications from 'expo-notifications';
+// import * as Notifications from 'expo-notifications';
 
 const nextSunrise = (lat = 0, long = 0, dayOffset = 0) => {
   const tau = 2 * Math.PI
@@ -90,21 +90,22 @@ export default function App() {
 
   const [location, setLocation] = useState(null);
   
-  useEffect(() => {
-    setSunrise(nextSunrise(location?.coords.latitude, location?.coords.longitude))
-  }, location)
+  // useEffect(() => {
+  //   setSunrise(nextSunrise(location?.coords.latitude, location?.coords.longitude))
+  // }, location)
 
   useEffect(() => {
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        setErrorMsg('Permission to access location was denied');
-        return;
-      }
+    // (async () => {
+    //   let { status } = await Location.requestForegroundPermissionsAsync();
+    //   if (status !== 'granted') {
+    //     return;
+    //   }
 
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
-    })()
+    //   let location = await Location.getCurrentPositionAsync({});
+    //   setLocation(location);
+    // })()
+
+    getLocation()
 
     const tick = setInterval(() => {      
       setTime(new Date)
@@ -115,6 +116,23 @@ export default function App() {
     }
   }, [])
 
+  const getLocation = () => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        setErrorMsg('Permission to access location was denied');
+      }
+
+      console.log(status)
+
+      let location = await Location.getCurrentPositionAsync();
+      setSunrise(nextSunrise(location?.coords.latitude, location?.coords.longitude))
+      setLocation(location);
+
+      // console.log();
+    })();
+  };
+
   async function handleDing() {
     console.log("ding")
     const { sound } = await Audio.Sound.createAsync(
@@ -124,6 +142,8 @@ export default function App() {
   }
 
   let brahmaMuhurta= (new Date(sunrise.getTime()-5760000))
+
+  // setSunrise(nextSunrise(location?.coords.latitude, location?.coords.longitude))
   
   let sunriseCountdown = {
     minutes: Math.floor((sunrise-time)/60000%60),
@@ -146,18 +166,21 @@ export default function App() {
         <Text>The time is {time.toTimeString().slice(0, 8)}</Text>
         <Text>The sunrise will be at {sunrise.toTimeString().slice(0, 5)}</Text>
         <Text>The Brahma Muhurta will be at {brahmaMuhurta.toTimeString().slice(0, 5)}</Text>
-        <Text>{`${sunriseCountdown.hours} hours, ${sunriseCountdown.minutes} minutes`} until next sunrise</Text>
+        <Text>{`${sunriseCountdown.hours} hours, ${sunriseCountdown.minutes} minutes`} until next sunrise.</Text>
         <Text>{`${brahmaMuhurtaCountdown.hours} hours,${brahmaMuhurtaCountdown.minutes} minutes`} until next Brahma Muhurta</Text>
         <Text>{`${location?.coords.latitude} latitude,${location?.coords.longitude} longitude`}</Text>
         <StatusBar style="auto" />
       </View>
       <View style={styles.container}>
         <Button 
-          onPress={()=>handleDing()}
-          title="Press Me"
-        >
+          onPress={()=>getLocation()}
+          title="Locate"
+        />
 
-        </Button>
+        <Button
+          onPress={()=>handleDing()}
+          title="Ding"
+        />
         <Text>{}</Text>
       </View>
     </SafeAreaView>
