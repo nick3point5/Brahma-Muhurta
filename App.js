@@ -90,21 +90,8 @@ export default function App() {
 
   const [location, setLocation] = useState(null);
   
-  // useEffect(() => {
-  //   setSunrise(nextSunrise(location?.coords.latitude, location?.coords.longitude))
-  // }, location)
 
   useEffect(() => {
-    // (async () => {
-    //   let { status } = await Location.requestForegroundPermissionsAsync();
-    //   if (status !== 'granted') {
-    //     return;
-    //   }
-
-    //   let location = await Location.getCurrentPositionAsync({});
-    //   setLocation(location);
-    // })()
-
     getLocation()
 
     const tick = setInterval(() => {      
@@ -123,13 +110,10 @@ export default function App() {
         setErrorMsg('Permission to access location was denied');
       }
 
-      console.log(status)
-
       let location = await Location.getCurrentPositionAsync();
       setSunrise(nextSunrise(location?.coords.latitude, location?.coords.longitude))
       setLocation(location);
 
-      // console.log();
     })();
   };
 
@@ -164,19 +148,23 @@ export default function App() {
     <SafeAreaView style = {styles.container}>
       <View style={styles.container}>
         <Text>The time is {time.toTimeString().slice(0, 8)}</Text>
-        <Text>The sunrise will be at {sunrise.toTimeString().slice(0, 5)}</Text>
-        <Text>The Brahma Muhurta will be at {brahmaMuhurta.toTimeString().slice(0, 5)}</Text>
-        <Text>{`${sunriseCountdown.hours} hours, ${sunriseCountdown.minutes} minutes`} until next sunrise.</Text>
-        <Text>{`${brahmaMuhurtaCountdown.hours} hours,${brahmaMuhurtaCountdown.minutes} minutes`} until next Brahma Muhurta</Text>
-        <Text>{`${location?.coords.latitude} latitude,${location?.coords.longitude} longitude`}</Text>
-        <StatusBar style="auto" />
       </View>
-      <View style={styles.container}>
+      
+      {location ? 
+        <View style={styles.container}>
+          <Text>The sunrise will be at {sunrise.toTimeString().slice(0, 5)}</Text>
+          <Text>The Brahma Muhurta will be at {brahmaMuhurta.toTimeString().slice(0, 5)}</Text>
+          <Text>{`${sunriseCountdown.hours} hours, ${sunriseCountdown.minutes} minutes`} until next sunrise.</Text>
+          <Text>{`${brahmaMuhurtaCountdown.hours} hours,${brahmaMuhurtaCountdown.minutes} minutes`} until next Brahma Muhurta</Text>
+        </View>      
+        :
         <Button 
           onPress={()=>getLocation()}
           title="Locate"
         />
-
+      }
+      
+      <View style={styles.container}>
         <Button
           onPress={()=>handleDing()}
           title="Ding"
@@ -193,5 +181,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  blue: {
+    backgroundColor: '#22A3F5',
   },
 });
