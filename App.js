@@ -1,9 +1,9 @@
 import React, {useState, useEffect, useRef} from 'react';
-import { StyleSheet, Text, View, Button, SafeAreaView } from 'react-native';
+import { StyleSheet, Text, View, Button, SafeAreaView, Platform } from 'react-native';
 import styles from './styles/container';
 import Sunrise from "./components/Sunrise.jsx";
 import Ding from "./components/Ding.jsx";
-import * as Notifications from 'expo-notifications';
+// import Notification from "./components/Notification.jsx";
 
 export default function App() {
   const [time, setTime] = useState(() => {
@@ -21,14 +21,14 @@ export default function App() {
   }, [])
 
   return (
-    <SafeAreaView style = {[styles.container]}>
-      <View style={styles.container}>
-        <Text>The time is {time.toTimeString().slice(0, 8)}</Text>
-      </View>
-      
+    <SafeAreaView style = {[styles.screen]}>
       <Sunrise time={time}/>
       <Ding/>
-
+      {/* {
+        Platform.OS === 'android'||Platform.OS === 'ios'?
+          <Notification/>:
+          <></>
+      } */}
     </SafeAreaView>
   );
 }
