@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Text, View, Platform, Button } from 'react-native';
+import { Text, View, Platform } from 'react-native';
 import * as Location from 'expo-location';
 import Ding from "./Ding.jsx";
 import styles from '../styles/container';
@@ -71,7 +71,7 @@ function Sunrise(props) {
       isBrahmaMuhurta.current = true
       didSendNotification.current = false
     }
-    
+
     if (timeDifference <= -48 * 60 * 1000) {
       const tomorrowSunrise = nextSunrise(location.current?.coords.latitude, location.current?.coords.longitude, 1)
       brahmaMuhurta.current = new Date(tomorrowSunrise?.getTime() - 5760000)
