@@ -1,7 +1,7 @@
 import Constants from 'expo-constants';
 import * as Notifications from 'expo-notifications';
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Button, Platform } from 'react-native';
+import { Platform } from 'react-native';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -41,9 +41,7 @@ function Notification(props) {
   
 
   if(!props.didSendNotification && !props.isBrahmaMuhurta){
-    console.log(props.didSendNotification.current)
     schedulePushNotification(props.brahmaMuhurtaCountdown,props.didSendNotification)
-    console.log(props.didSendNotification.current)
   }
 
   async function schedulePushNotification(brahmaMuhurtaCountdown,didSendNotification,isBrahmaMuhurta) {

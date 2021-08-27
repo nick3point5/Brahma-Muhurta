@@ -1,16 +1,21 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import {View, Button} from 'react-native';
 import { Audio } from 'expo-av';
 import styles from '../styles/container';
 
-function Ding() {
+function Ding(props) {
   async function handleDing() {
-    console.log("ding")
     const { sound } = await Audio.Sound.createAsync(
       require('../assets/ding.wav')
     );
     await sound.playAsync()
   }
+
+  if (props.ding.current) {
+    handleDing()
+    props.ding.current = false
+  }
+
   return (
     <View style = {[styles.container]}>
       <Button

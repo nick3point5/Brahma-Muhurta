@@ -1,18 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Text, View, Button, Platform } from 'react-native';
+import { Text, View, Platform, Button } from 'react-native';
 import * as Location from 'expo-location';
+import Ding from "./Ding.jsx";
 import styles from '../styles/container';
 import Notification from "./Notification.jsx";
 const { nextSunrise } = require('../modules/sunrise')
 
 function Sunrise(props) {
   const [sunrise, setSunrise] = useState(() => null)
-  let location = useRef(null);
-  let brahmaMuhurta = useRef(null)
-  let isBrahmaMuhurta = false
-  let didSendNotification = useRef(false)
-
-  // console.log(didSendNotification.current)
+  const location = useRef(null);
+  const brahmaMuhurta = useRef(null)
+  const isBrahmaMuhurta = useRef(false)
+  const didSendNotification = useRef(false)
+  const ding = useRef(false)
+  const timeDifference = brahmaMuhurta.current - props.time
 
   useEffect(() => {
     getLocation()
@@ -22,11 +23,10 @@ function Sunrise(props) {
     brahmaMuhurta.current = new Date(sunrise?.getTime() - 5760000)
   }, sunrise)
 
-  const getLocation = () => {
+  function getLocation() {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
-        setErrorMsg('Permission to access location was denied');
         return;
       }
 
@@ -35,42 +35,52 @@ function Sunrise(props) {
     })();
   };
 
+  const brahmaMuhurtaCountdown = {
+    seconds: Math.floor((timeDifference) / 1000 % 60),
+    minutes: Math.floor((timeDifference) / 60000 % 60),
+    hours: Math.floor((timeDifference) / 3600000),
+    text() {
+      const hours = this.hours ?
+        `${this.hours} hour` + ((this.hours !== 1) ? "s, " : "")
+        :
+        ""
+
+      const minutes = this.minutes ?
+        `${this.minutes} minute` + ((this.minutes !== 1) ? "s" : "")
+        :
+        ""
+
+      if (!hours && !minutes) {
+        return "Brahma Muhurta soon"
+      }
+
+      return hours + minutes + " until Brahma Muhurta"
+    },
+  }
+
   if (!location.current) {
     getLocation()
-  }
-
-
-
-  if (props.time >= sunrise && !!location.current) {
-    setSunrise(nextSunrise(location.current?.coords.latitude, location.current?.coords.longitude))
-  }
-
-  if (brahmaMuhurta.current <= props.time) {
-    const tomorrowSunrise = nextSunrise(location.current?.coords.latitude, location.current?.coords.longitude, 1)
-    brahmaMuhurta.current = new Date(tomorrowSunrise?.getTime() - 5760000)
-  }
-
-  const sunriseCountdown = {
-    seconds: Math.floor((sunrise - props.time) / 1000 % 60),
-    minutes: Math.floor((sunrise - props.time) / 60000 % 60),
-    hours: Math.floor((sunrise - props.time) / 3600000 % 24),
-  }
-
-  const brahmaMuhurtaCountdown = {
-    seconds: Math.floor((brahmaMuhurta.current - props.time) / 1000 % 60),
-    minutes: Math.floor((brahmaMuhurta.current - props.time) / 60000 % 60),
-    hours: Math.floor((brahmaMuhurta.current - props.time) / 3600000),
-  }
-
-  if (brahmaMuhurtaCountdown.minutes <= 0 &&
-    brahmaMuhurtaCountdown.minutes <= -48) {
-    isBrahmaMuhurta = true
-    didSendNotification.current = false
   } else {
-    isBrahmaMuhurta = false
+
+    if (props.time >= sunrise && !!location.current) {
+      setSunrise(nextSunrise(location.current?.coords.latitude, location.current?.coords.longitude))
+    }
+
+    if (timeDifference <= 0 && !isBrahmaMuhurta.current) {
+      ding.current = true
+      isBrahmaMuhurta.current = true
+      didSendNotification.current = false
+    }
+
+    console.log(timeDifference <= -48 * 60 * 1000)
+    if (timeDifference <= -48 * 60 * 1000) {
+      const tomorrowSunrise = nextSunrise(location.current?.coords.latitude, location.current?.coords.longitude, 1)
+      brahmaMuhurta.current = new Date(tomorrowSunrise?.getTime() - 5760000)
+      isBrahmaMuhurta.current = false
+      
+    }
+
   }
-
-
 
   return (
     <>
@@ -79,13 +89,13 @@ function Sunrise(props) {
           brahmaMuhurta.current.toTimeString() !== "Invalid Date" ?
           <View style={[styles.container]}>
             {
-              isBrahmaMuhurta ?
+              isBrahmaMuhurta.current ?
                 <Text style={[styles.text]}>Brahma Muhurta</Text>
                 :
                 <>
                   <Text style={[styles.text]}>The time is {props.time.toTimeString().slice(0, 8)}</Text>
                   <Text style={[styles.text]}>The next Brahma Muhurta will be at {brahmaMuhurta.current?.toTimeString().slice(0, 5)}</Text>
-                  <Text style={[styles.text]}>{`${brahmaMuhurtaCountdown.hours} hours, ${brahmaMuhurtaCountdown.minutes} minutes`} until next Brahma Muhurta</Text>
+                  <Text style={[styles.text]}>{brahmaMuhurtaCountdown.text()}</Text>
                 </>
             }
           </View>
@@ -99,13 +109,14 @@ function Sunrise(props) {
           Platform.OS === 'android' || Platform.OS === 'ios' ?
             <Notification
               brahmaMuhurtaCountdown={brahmaMuhurtaCountdown}
-              isBrahmaMuhurta={isBrahmaMuhurta}
-              didSendNotification={didSendNotification} />
+              isBrahmaMuhurta={isBrahmaMuhurta.current}
+              didSendNotification={didSendNotification.current} />
             :
             <></>
           :
           <></>
       }
+        <Ding ding={ding}/>
     </>
   )
 }

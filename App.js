@@ -1,9 +1,7 @@
-import React, {useState, useEffect, useRef} from 'react';
-import { StyleSheet, Text, View, Button, SafeAreaView, Platform } from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {SafeAreaView} from 'react-native';
 import styles from './styles/container';
 import Sunrise from "./components/Sunrise.jsx";
-import Ding from "./components/Ding.jsx";
-// import Notification from "./components/Notification.jsx";
 
 export default function App() {
   const [time, setTime] = useState(() => {
@@ -23,12 +21,6 @@ export default function App() {
   return (
     <SafeAreaView style = {[styles.screen]}>
       <Sunrise time={time}/>
-      <Ding/>
-      {/* {
-        Platform.OS === 'android'||Platform.OS === 'ios'?
-          <Notification/>:
-          <></>
-      } */}
     </SafeAreaView>
   );
 }
