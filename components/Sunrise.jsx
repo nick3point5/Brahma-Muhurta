@@ -41,7 +41,7 @@ function Sunrise(props) {
     hours: Math.floor((timeDifference) / 3600000),
     text() {
       const hours = this.hours ?
-        `${this.hours} hour` + ((this.hours !== 1) ? "s, " : "")
+        `${this.hours} hour` + ((this.hours !== 1) ? "s, " : ", ")
         :
         ""
 
@@ -54,7 +54,7 @@ function Sunrise(props) {
         return "Brahma Muhurta soon"
       }
 
-      return hours + minutes + " until Brahma Muhurta"
+      return hours + minutes
     },
   }
 
@@ -81,26 +81,30 @@ function Sunrise(props) {
   }
 
   return (
-    <>
+    <View style={[styles.container]}>
+      <View style={[styles.container]}>
+      </View>
       {
         location.current &&
           brahmaMuhurta.current.toTimeString() !== "Invalid Date" ?
-          <View style={[styles.container]}>
+          <View style={[styles.textContainer]}>
             {
               isBrahmaMuhurta.current ?
                 <Text style={[styles.text]}>Brahma Muhurta</Text>
                 :
                 <>
-                  <Text style={[styles.text]}>The time is {props.time.toTimeString().slice(0, 8)}</Text>
-                  <Text style={[styles.text]}>The next Brahma Muhurta will be at {brahmaMuhurta.current?.toTimeString().slice(0, 5)}</Text>
-                  <Text style={[styles.text]}>{brahmaMuhurtaCountdown.text()}</Text>
+                  <Text style={[styles.text, styles.textHeader]}>Next Brahma Muhurta</Text>
+                  <Ding ding={ding} brahmaMuhurta={brahmaMuhurta}/>
+                  <Text style={[styles.text, styles.textCountDown]}>{brahmaMuhurtaCountdown.text()}</Text>
                 </>
             }
           </View>
           :
-          <>
-          </>
+          <View style={[styles.container]}>
+          </View>
       }
+      <View style={[styles.container]}>
+      </View>
       {
         location.current &&
           brahmaMuhurta.current.toTimeString() !== "Invalid Date" ?
@@ -114,8 +118,7 @@ function Sunrise(props) {
           :
           <></>
       }
-        <Ding ding={ding}/>
-    </>
+    </View>
   )
 }
 

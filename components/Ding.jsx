@@ -1,5 +1,5 @@
 import React, { useRef } from 'react'
-import {View, Button} from 'react-native';
+import {View, Button, TouchableOpacity, Text} from 'react-native';
 import { Audio } from 'expo-av';
 import styles from '../styles/container';
 
@@ -17,11 +17,12 @@ function Ding(props) {
   }
 
   return (
-    <View style = {[styles.container]}>
-      <Button
+    <View style={[styles.textContainer]}>
+      <TouchableOpacity
         onPress={()=>handleDing()}
-        title="Ding"
-      />
+        style={{}}>
+          <Text style={[styles.text, styles.textTime]}>{props.brahmaMuhurta.current?.toTimeString().slice(0, 5)}</Text>
+      </TouchableOpacity>
     </View>
   )
 }
