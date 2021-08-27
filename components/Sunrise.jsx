@@ -10,6 +10,9 @@ function Sunrise(props) {
   let location = useRef(null);
   let brahmaMuhurta = useRef(null)
   let isBrahmaMuhurta = false
+  let didSendNotification = useRef(false)
+
+  // console.log(didSendNotification.current)
 
   useEffect(() => {
     getLocation()
@@ -19,22 +22,33 @@ function Sunrise(props) {
     brahmaMuhurta.current = new Date(sunrise?.getTime() - 5760000)
   }, sunrise)
 
-  if (brahmaMuhurta.current <= props.time) {
-    const tomorrowSunrise = nextSunrise(location.current?.coords.latitude, location.current?.coords.longitude,1)
-    brahmaMuhurta.current = new Date(tomorrowSunrise?.getTime() - 5760000)
-  }
-
   const getLocation = () => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
         setErrorMsg('Permission to access location was denied');
+        return;
       }
 
       location.current = await Location.getCurrentPositionAsync();
       setSunrise(nextSunrise(location.current?.coords.latitude, location.current?.coords.longitude))
     })();
   };
+
+  if (!location.current) {
+    getLocation()
+  }
+
+
+
+  if (props.time >= sunrise && !!location.current) {
+    setSunrise(nextSunrise(location.current?.coords.latitude, location.current?.coords.longitude))
+  }
+
+  if (brahmaMuhurta.current <= props.time) {
+    const tomorrowSunrise = nextSunrise(location.current?.coords.latitude, location.current?.coords.longitude, 1)
+    brahmaMuhurta.current = new Date(tomorrowSunrise?.getTime() - 5760000)
+  }
 
   const sunriseCountdown = {
     seconds: Math.floor((sunrise - props.time) / 1000 % 60),
@@ -45,39 +59,51 @@ function Sunrise(props) {
   const brahmaMuhurtaCountdown = {
     seconds: Math.floor((brahmaMuhurta.current - props.time) / 1000 % 60),
     minutes: Math.floor((brahmaMuhurta.current - props.time) / 60000 % 60),
-    hours: Math.floor((brahmaMuhurta.current - props.time) / 3600000 % 60),
+    hours: Math.floor((brahmaMuhurta.current - props.time) / 3600000),
   }
 
   if (brahmaMuhurtaCountdown.minutes <= 0 &&
-      brahmaMuhurtaCountdown.minutes <= -48) {
-        isBrahmaMuhurta=true
+    brahmaMuhurtaCountdown.minutes <= -48) {
+    isBrahmaMuhurta = true
+    didSendNotification.current = false
+  } else {
+    isBrahmaMuhurta = false
   }
+
+
 
   return (
     <>
-      {location.current ?
-        <View style={[styles.container]}>
-          {
-            isBrahmaMuhurta ?
-              <Text>Brahma Muhurta</Text> :
-              <>
-                <Text>The time is {props.time.toTimeString().slice(0, 8)}</Text>
-                <Text>The next Brahma Muhurta will be at {brahmaMuhurta.current?.toTimeString().slice(0, 5)}</Text>
-                <Text>{`${brahmaMuhurtaCountdown.hours} hours,${brahmaMuhurtaCountdown.minutes} minutes`} until next Brahma Muhurta</Text>
-              </>
-          }
-        </View> :
-        <View style={[styles.container]}>
-          <Button
-          onPress={() => getLocation()}
-          title="Locate"
-        />
-        </View>
-
+      {
+        location.current &&
+          brahmaMuhurta.current.toTimeString() !== "Invalid Date" ?
+          <View style={[styles.container]}>
+            {
+              isBrahmaMuhurta ?
+                <Text style={[styles.text]}>Brahma Muhurta</Text>
+                :
+                <>
+                  <Text style={[styles.text]}>The time is {props.time.toTimeString().slice(0, 8)}</Text>
+                  <Text style={[styles.text]}>The next Brahma Muhurta will be at {brahmaMuhurta.current?.toTimeString().slice(0, 5)}</Text>
+                  <Text style={[styles.text]}>{`${brahmaMuhurtaCountdown.hours} hours, ${brahmaMuhurtaCountdown.minutes} minutes`} until next Brahma Muhurta</Text>
+                </>
+            }
+          </View>
+          :
+          <>
+          </>
       }
       {
-        Platform.OS === 'android'||Platform.OS === 'ios'?
-          <Notification/>:
+        location.current &&
+          brahmaMuhurta.current.toTimeString() !== "Invalid Date" ?
+          Platform.OS === 'android' || Platform.OS === 'ios' ?
+            <Notification
+              brahmaMuhurtaCountdown={brahmaMuhurtaCountdown}
+              isBrahmaMuhurta={isBrahmaMuhurta}
+              didSendNotification={didSendNotification} />
+            :
+            <></>
+          :
           <></>
       }
     </>
