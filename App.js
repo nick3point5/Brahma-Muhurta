@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import {SafeAreaView} from 'react-native';
 import styles from './styles/container';
 import Sunrise from "./components/Sunrise.jsx";
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function App() {
   const [time, setTime] = useState(() => {
@@ -19,8 +20,11 @@ export default function App() {
   }, [])
 
   return (
-    <SafeAreaView style = {[styles.screen]}>
-      <Sunrise time={time}/>
-    </SafeAreaView>
+    <LinearGradient
+      colors={['#3e1a33', '#461069']}
+      style = {[styles.screen]}
+      >
+        <Sunrise time={time}/>
+    </LinearGradient>
   );
 }

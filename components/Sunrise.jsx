@@ -1,22 +1,35 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Text, View, Platform } from 'react-native';
+import { Text, View, Platform, StyleSheet } from 'react-native';
 import * as Location from 'expo-location';
+import * as Font from 'expo-font';
 import Ding from "./Ding.jsx";
 import styles from '../styles/container';
 import Notification from "./Notification.jsx";
 const { nextSunrise } = require('../modules/sunrise')
 
+console.log([styles.screen])
+
 function Sunrise(props) {
   const [sunrise, setSunrise] = useState(() => null)
+  const [fontsLoaded, setFontsLoaded] = useState(() => false)
   const location = useRef(null);
   const brahmaMuhurta = useRef(null)
   const isBrahmaMuhurta = useRef(false)
   const didSendNotification = useRef(false)
   const ding = useRef(false)
+
+  async function  loadFonts() {
+    await Font.loadAsync({
+      Meditation: require('../assets/Meditation.ttf'),
+    });
+    setFontsLoaded(true);
+  }
+
   const timeDifference = brahmaMuhurta.current - props.time
 
   useEffect(() => {
     getLocation()
+    loadFonts()
   }, [])
 
   useEffect(() => {
@@ -90,7 +103,7 @@ function Sunrise(props) {
           <View style={[styles.textContainer]}>
             {
               isBrahmaMuhurta.current ?
-                <Text style={[styles.text]}>Brahma Muhurta</Text>
+                <Text style={[styles.text,]}>Brahma Muhurta</Text>
                 :
                 <>
                   <Text style={[styles.text, styles.textHeader]}>Next Brahma Muhurta</Text>
