@@ -28,7 +28,7 @@ function Notification(props) {
       console.log(response);
     });
 
-    if(!props.didSendNotification && !props.isBrahmaMuhurta){
+    if(!props.didSendNotification.current && !props.isBrahmaMuhurta.current){
         schedulePushNotification(props.brahmaMuhurtaCountdown,props.didSendNotification)
     }
 
@@ -39,22 +39,23 @@ function Notification(props) {
   }, []);
 
   
+  console.log(props.brahmaMuhurtaCountdown.seconds+60*props.brahmaMuhurtaCountdown.minutes+3600*props.brahmaMuhurtaCountdown.hours)
 
-  if(!props.didSendNotification && !props.isBrahmaMuhurta){
+  if(!props.didSendNotification.current && !props.isBrahmaMuhurta.current){
     schedulePushNotification(props.brahmaMuhurtaCountdown,props.didSendNotification)
   }
 
-  async function schedulePushNotification(brahmaMuhurtaCountdown,didSendNotification,isBrahmaMuhurta) {
+  async function schedulePushNotification() {
+    console.log("go")
+    props.didSendNotification.current = true;
     await Notifications.scheduleNotificationAsync({
       content: {
         title: "It's Brahma Muhurta 🕉",
       },
       trigger: { 
-        seconds: brahmaMuhurtaCountdown.seconds+60*brahmaMuhurtaCountdown.minutes+3600*brahmaMuhurtaCountdown.hours
+        seconds: props.brahmaMuhurtaCountdown.seconds+60*props.brahmaMuhurtaCountdown.minutes+3600*props.brahmaMuhurtaCountdown.hours
       },
     });
-
-    didSendNotification.current = true;
 
   }
 

@@ -71,13 +71,11 @@ function Sunrise(props) {
       isBrahmaMuhurta.current = true
       didSendNotification.current = false
     }
-
-    console.log(timeDifference <= -48 * 60 * 1000)
+    
     if (timeDifference <= -48 * 60 * 1000) {
       const tomorrowSunrise = nextSunrise(location.current?.coords.latitude, location.current?.coords.longitude, 1)
       brahmaMuhurta.current = new Date(tomorrowSunrise?.getTime() - 5760000)
       isBrahmaMuhurta.current = false
-      
     }
 
   }
@@ -109,8 +107,8 @@ function Sunrise(props) {
           Platform.OS === 'android' || Platform.OS === 'ios' ?
             <Notification
               brahmaMuhurtaCountdown={brahmaMuhurtaCountdown}
-              isBrahmaMuhurta={isBrahmaMuhurta.current}
-              didSendNotification={didSendNotification.current} />
+              isBrahmaMuhurta={isBrahmaMuhurta}
+              didSendNotification={didSendNotification} />
             :
             <></>
           :
