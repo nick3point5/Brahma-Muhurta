@@ -28,8 +28,8 @@ function Notification(props) {
       console.log(response);
     });
 
-    if(!props.didSendNotification.current && !props.isBrahmaMuhurta.current){
-        schedulePushNotification(props.brahmaMuhurtaCountdown,props.didSendNotification)
+    if (!props.didSendNotification.current && !props.isBrahmaMuhurta.current) {
+      schedulePushNotification(props.brahmaMuhurtaCountdown, props.didSendNotification)
     }
 
     return () => {
@@ -38,8 +38,8 @@ function Notification(props) {
     };
   }, []);
 
-  if(!props.didSendNotification.current && !props.isBrahmaMuhurta.current){
-    schedulePushNotification(props.brahmaMuhurtaCountdown,props.didSendNotification)
+  if (!props.didSendNotification.current && !props.isBrahmaMuhurta.current) {
+    schedulePushNotification(props.brahmaMuhurtaCountdown, props.didSendNotification)
   }
 
   async function schedulePushNotification() {
@@ -48,8 +48,8 @@ function Notification(props) {
       content: {
         title: "It's Brahma Muhurta 🕉",
       },
-      trigger: { 
-        seconds: props.brahmaMuhurtaCountdown.seconds+60*props.brahmaMuhurtaCountdown.minutes+3600*props.brahmaMuhurtaCountdown.hours
+      trigger: {
+        seconds: props.brahmaMuhurtaCountdown.seconds + 60 * props.brahmaMuhurtaCountdown.minutes + 3600 * props.brahmaMuhurtaCountdown.hours
       },
     });
 
@@ -70,7 +70,7 @@ function Notification(props) {
       }
       token = (await Notifications.getExpoPushTokenAsync()).data;
     }
-  
+
     if (Platform.OS === 'android') {
       Notifications.setNotificationChannelAsync('default', {
         name: 'default',
@@ -79,7 +79,7 @@ function Notification(props) {
         lightColor: '#FF231F7C',
       });
     }
-  
+
     return token;
   }
 
@@ -90,3 +90,4 @@ function Notification(props) {
 }
 
 export default Notification
+

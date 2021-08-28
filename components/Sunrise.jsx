@@ -7,8 +7,6 @@ import styles from '../styles/container';
 import Notification from "./Notification.jsx";
 const { nextSunrise } = require('../modules/sunrise')
 
-console.log([styles.screen])
-
 function Sunrise(props) {
   const [sunrise, setSunrise] = useState(() => null)
   const [fontsLoaded, setFontsLoaded] = useState(() => false)
@@ -18,7 +16,7 @@ function Sunrise(props) {
   const didSendNotification = useRef(false)
   const ding = useRef(false)
 
-  async function  loadFonts() {
+  async function loadFonts() {
     await Font.loadAsync({
       Meditation: require('../assets/Meditation.ttf'),
     });
@@ -104,11 +102,11 @@ function Sunrise(props) {
           <View style={[styles.textContainer]}>
             {
               isBrahmaMuhurta.current ?
-                <Text style={[styles.text,]}>Brahma Muhurta</Text>
+                <Ding ding={ding} brahmaMuhurta={brahmaMuhurta} message={'Brahma Muhurta'} />
                 :
                 <>
                   <Text style={[styles.text, styles.textHeader]}>Next Brahma Muhurta</Text>
-                  <Ding ding={ding} brahmaMuhurta={brahmaMuhurta}/>
+                  <Ding ding={ding} message={brahmaMuhurta.current?.toTimeString().slice(0, 5)} />
                   <Text style={[styles.text, styles.textCountDown]}>{brahmaMuhurtaCountdown.text()}</Text>
                 </>
             }

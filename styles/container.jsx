@@ -1,5 +1,4 @@
-import {StyleSheet} from 'react-native';
-import { useFonts } from 'expo-font';
+import { StyleSheet } from 'react-native';
 
 const sky = '#22A3F5'
 const lull = '#223AF5'
@@ -9,13 +8,10 @@ const black = '#000'
 const white = '#fff'
 const transparent = 'transparent'
 
-// const font = 'normal'
-
 const backgroundColor = transparent
 const textColor = '#d98d7b'
 
-function stylesTime(backgroundColor, textColor, font=null) {
-
+function stylesTime(backgroundColor, textColor, font = null) {
 
   const styles = StyleSheet.create({
     container: {
@@ -66,6 +62,6 @@ function stylesTime(backgroundColor, textColor, font=null) {
   return styles
 }
 
-const styles  = stylesTime(backgroundColor, textColor)
+const styles = stylesTime(backgroundColor, textColor)
 
 export default styles
