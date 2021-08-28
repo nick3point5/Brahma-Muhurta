@@ -86,6 +86,7 @@ function Sunrise(props) {
     }
 
     if (timeDifference <= -48 * 60 * 1000) {
+      ding.current = true
       const tomorrowSunrise = nextSunrise(location.current?.coords.latitude, location.current?.coords.longitude, 1)
       brahmaMuhurta.current = new Date(tomorrowSunrise?.getTime() - 5760000)
       isBrahmaMuhurta.current = false
