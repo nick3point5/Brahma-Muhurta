@@ -44,6 +44,7 @@ function Notification(props) {
 
   async function schedulePushNotification() {
     props.didSendNotification.current = true;
+    console.log("sent")
     await Notifications.scheduleNotificationAsync({
       content: {
         title: "It's Brahma Muhurta 🕉",
