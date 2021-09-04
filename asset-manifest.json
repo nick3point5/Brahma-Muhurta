@@ -1,0 +1,24 @@
+{
+  "files": {
+    "app.js": "/brahma-muhurta-web/static/js/app.6730045d.chunk.js",
+    "app.js.map": "/brahma-muhurta-web/static/js/app.6730045d.chunk.js.map",
+    "runtime~app.js": "/brahma-muhurta-web/static/js/runtime~app.05995092.js",
+    "runtime~app.js.map": "/brahma-muhurta-web/static/js/runtime~app.05995092.js.map",
+    "static/js/2.95f79b77.chunk.js": "/brahma-muhurta-web/static/js/2.95f79b77.chunk.js",
+    "static/js/2.95f79b77.chunk.js.map": "/brahma-muhurta-web/static/js/2.95f79b77.chunk.js.map",
+    "fonts/Meditation.ttf": "/brahma-muhurta-web/./fonts/Meditation.ttf",
+    "favicon-16.png": "/brahma-muhurta-web/favicon-16.png",
+    "favicon-32.png": "/brahma-muhurta-web/favicon-32.png",
+    "favicon.ico": "/brahma-muhurta-web/favicon.ico",
+    "index.html": "/brahma-muhurta-web/index.html",
+    "manifest.json": "/brahma-muhurta-web/manifest.json",
+    "serve.json": "/brahma-muhurta-web/serve.json",
+    "static/js/2.95f79b77.chunk.js.LICENSE.txt": "/brahma-muhurta-web/static/js/2.95f79b77.chunk.js.LICENSE.txt",
+    "static/media/ding.wav": "/brahma-muhurta-web/static/media/ding.7764176f.wav"
+  },
+  "entrypoints": [
+    "static/js/runtime~app.05995092.js",
+    "static/js/2.95f79b77.chunk.js",
+    "static/js/app.6730045d.chunk.js"
+  ]
+}
