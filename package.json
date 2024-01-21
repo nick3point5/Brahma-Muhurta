@@ -10,22 +10,23 @@
     "predeploy": "expo build:web"
   },
   "dependencies": {
-    "expo": "~42.0.1",
-    "expo-av": "~9.2.3",
-    "expo-font": "~9.2.1",
-    "expo-linear-gradient": "~9.2.0",
-    "expo-location": "~12.1.2",
-    "expo-notifications": "~0.12.3",
-    "expo-screen-orientation": "~3.2.1",
-    "expo-status-bar": "~1.0.4",
-    "react": "16.13.1",
-    "react-dom": "16.13.1",
-    "react-native": "https://github.com/expo/react-native/archive/sdk-42.0.0.tar.gz",
+    "@expo/metro-runtime": "^3.1.1",
+    "expo": "^50.0.2",
+    "expo-av": "~13.10.3",
+    "expo-font": "~11.10.2",
+    "expo-linear-gradient": "~12.7.0",
+    "expo-location": "~16.5.2",
+    "expo-notifications": "~0.27.4",
+    "expo-screen-orientation": "~6.4.1",
+    "expo-status-bar": "~1.11.1",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-native": "0.73.2",
     "react-native-geolocation-service": "*",
-    "react-native-web": "~0.13.12"
+    "react-native-web": "~0.19.6"
   },
   "devDependencies": {
-    "@babel/core": "^7.9.0",
+    "@babel/core": "^7.20.0",
     "gh-pages": "^3.2.3"
   },
   "private": true,

@@ -30,6 +30,9 @@
       "favicon": "./assets/favicon.png"
     },
     "description": "Let's you know and reminds you when Brahma Muhurta is.",
-    "githubUrl": "https://github.com/nick3point5/Brahma-Muhurta/tree/master"
+    "githubUrl": "https://github.com/nick3point5/Brahma-Muhurta/tree/master",
+    "plugins": [
+      "expo-font"
+    ]
   }
 }
