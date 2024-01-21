@@ -2,7 +2,7 @@
   "expo": {
     "name": "brahma-muhurta",
     "slug": "brahma-muhurta",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -33,6 +33,11 @@
     "githubUrl": "https://github.com/nick3point5/Brahma-Muhurta/tree/master",
     "plugins": [
       "expo-font"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "780910d5-99ef-4b45-87fa-e3dd7a716583"
+      }
+    }
   }
 }
